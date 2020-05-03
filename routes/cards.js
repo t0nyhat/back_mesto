@@ -5,7 +5,7 @@ const path = require('path');
 const filepath = path.join(__dirname, '../data/cards.json');
 const cards = fs.readFileSync(filepath, { encoding: 'utf8' });
 
-router.get('/cards', (req, res) => {
+router.get('/', (req, res) => {
   res.send(cards);
 });
 

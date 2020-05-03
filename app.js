@@ -8,8 +8,10 @@ const error = (req, res, next) => {
   next();
 };
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', require('./routes/cards.js'));
-app.use('/', require('./routes/users.js'));
+app.use('/cards', require('./routes/cards.js'));
+app.use('/users', require('./routes/users.js'));
 
 app.use('*', error);
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.info(`App in port ${PORT}`);
+});

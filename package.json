@@ -1,6 +1,6 @@
 {
   "name": "back_12",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "first steps in backend development using node.js and express",
   "main": "app.js",
   "scripts": {

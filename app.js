@@ -33,5 +33,6 @@ app.use('/users', require('./routes/users.js'));
 
 app.use('*', error);
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.info(`App in port ${PORT}`);
 });

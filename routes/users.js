@@ -1,13 +1,13 @@
 const router = require('express').Router();
-const fs = require('fs');
-const path = require('path');
+const User = require('../models/user');
 
-const filepath = path.join(__dirname, '../data/users.json'); // собрали абсолютный путь к файлу
-const users = fs.readFileSync(filepath, { encoding: 'utf8' });
+
+
 
 router.get('/', (req, res) => {
-  res.send(users);
+ // res.send(users);
 });
+/*
 router.get('/:id', (req, res) => {
   const user = JSON.parse(users).find((element) => element._id === req.params.id);
   if (user) {
@@ -15,6 +15,17 @@ router.get('/:id', (req, res) => {
   } else {
     res.status(404).send({ message: 'Нет пользователя с таким id' });
   }
+});
+*/
+
+router.post('/', (req, res) => {
+  console.log(req.body);
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(500).send({ message: err.message }));
+
 });
 
 module.exports = router;

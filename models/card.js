@@ -4,7 +4,7 @@ const validate = require('mongoose-validator');
 const urlValidator = [
   validate({
     validator: 'isURL',
-    message: 'Невалидный URL аватара',
+    message: 'Невалидный URL изображения',
   }),
 ];
 const cardSchema = new mongoose.Schema({

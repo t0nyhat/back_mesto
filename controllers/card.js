@@ -43,7 +43,7 @@ const likeCard = (req, res) => {
     })
     .catch((error) => {
       if (error.message.indexOf('Cast to ObjectId failed') === 0) {
-        res.status(404).send(`Карточка с id : ${req.params.cardId} не найдена!`);
+        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
         return;
       }
       res.status(500).send({ message: error });
@@ -60,7 +60,7 @@ const dislikeCard = (req, res) => {
     })
     .catch((error) => {
       if (error.message.indexOf('Cast to ObjectId failed') === 0) {
-        res.status(404).send(`Карточка с id : ${req.params.cardId} не найдена!`);
+        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
         return;
       }
       res.status(500).send({ message: error });

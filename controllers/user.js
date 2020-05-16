@@ -25,4 +25,20 @@ const createUser = (req, res) => {
     .then((user) => res.send({ user }))
     .catch((error) => res.status(500).send({ message: error.message }));
 };
-module.exports = { getUsers, getUsersById, createUser };
+const patchUserInfo = (req, res) => {
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => res.send({ user }))
+    .catch((error) => res.status(500).send({ message: error.message }));
+};
+const patchUserAvatar = (req, res) => {
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .then((user) => res.send({ data: user }))
+    .catch((error) => res.status(500).send({ message: error.message }));
+};
+module.exports = {
+  getUsers, getUsersById, createUser, patchUserInfo, patchUserAvatar,
+};

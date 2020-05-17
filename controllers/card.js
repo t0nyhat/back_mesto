@@ -1,21 +1,5 @@
 const Card = require('../models/card');
-
-function errorHandler(error, req, res) {
-  if (error.name === 'CastError') {
-    res.status(400).send({ message: error.message });
-    return;
-  }
-  if (error.name === 'Error') {
-    res.status(404).send({ message: error.message });
-    return;
-  }
-  if (error.name === 'ValidationError') {
-    res.status(400).send({ message: error.message });
-    return;
-  }
-
-  res.status(500).send({ message: error.message });
-}
+const { errorHandler } = require('../middlewares/errorHandler');
 
 const getCards = (req, res) => {
   Card.find({})

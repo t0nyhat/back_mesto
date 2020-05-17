@@ -1,9 +1,29 @@
 const Card = require('../models/card');
 
+function errorHandler(error, req, res) {
+  if (error.name === 'CastError') {
+    res.status(400).send({ message: error.message });
+    return;
+  }
+  if (error.name === 'Error') {
+    res.status(404).send({ message: error.message });
+    return;
+  }
+  if (error.name === 'ValidationError') {
+    res.status(400).send({ message: error.message });
+    return;
+  }
+
+  res.status(500).send({ message: error.message });
+}
+
 const getCards = (req, res) => {
   Card.find({})
+    .orFail(new Error('Список карточек пуст'))
     .then((cards) => res.send({ cards }))
-    .catch((error) => res.status(404).send({ message: error.message }));
+    .catch((error) => {
+      errorHandler(error, req, res);
+    });
 };
 
 const createCard = (req, res) => {
@@ -12,24 +32,22 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ card }))
-    .catch((error) => res.status(500).send({ message: error.message }));
+    .catch((error) => {
+      errorHandler(error, req, res);
+    });
 };
 
 const deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
     .then((card) => {
       if (!card) {
-        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
-      } else {
-        res.send({ card });
+        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
       }
+      res.send({ card });
     })
     .catch((error) => {
-      if (error.message.indexOf('Cast to ObjectId failed') === 0) {
-        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
-        return;
-      }
-      res.status(500).send({ message: error });
+      errorHandler(error, req, res);
     });
 };
 const likeCard = (req, res) => {
@@ -38,15 +56,15 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
     .then((card) => {
+      if (!card) {
+        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+      }
       res.send({ card });
     })
     .catch((error) => {
-      if (error.message.indexOf('Cast to ObjectId failed') === 0) {
-        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
-        return;
-      }
-      res.status(500).send({ message: error });
+      errorHandler(error, req, res);
     });
 };
 
@@ -55,15 +73,15 @@ const dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
   )
+    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
     .then((card) => {
+      if (!card) {
+        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+      }
       res.send({ card });
     })
     .catch((error) => {
-      if (error.message.indexOf('Cast to ObjectId failed') === 0) {
-        res.status(404).send(`Карточки с id : ${req.params.cardId} не существует!`);
-        return;
-      }
-      res.status(500).send({ message: error });
+      errorHandler(error, req, res);
     });
 };
 module.exports = {

@@ -29,6 +29,9 @@ const getUsersById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(new Error(`Пользователя с id : ${req.params.userId} не существует!`))
     .then((user) => {
+      if (!user) {
+        throw new Error(`Пользователя с id : ${req.params.userId} не существует!`);
+      }
       res.send({ user });
     })
     .catch((error) => {
@@ -40,7 +43,6 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .orFail(new Error('Ошибка создания пользователя'))
     .then((user) => res.send({ user }))
     .catch((error) => {
       errorHandler(error, req, res);
@@ -51,7 +53,12 @@ const patchUserInfo = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new Error(`Пользователя с id : ${req.params.userId} не существует!`))
-    .then((user) => res.send({ user }))
+    .then((user) => {
+      if (!user) {
+        throw new Error(`Пользователя с id : ${req.params.userId} не существует!`);
+      }
+      res.send({ user });
+    })
     .catch((error) => {
       errorHandler(error, req, res);
     });
@@ -61,7 +68,12 @@ const patchUserAvatar = (req, res) => {
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new Error(`Пользователя с id : ${req.params.userId} не существует!`))
-    .then((user) => res.send({ user }))
+    .then((user) => {
+      if (!user) {
+        throw new Error(`Пользователя с id : ${req.params.userId} не существует!`);
+      }
+      res.send({ user });
+    })
     .catch((error) => {
       errorHandler(error, req, res);
     });

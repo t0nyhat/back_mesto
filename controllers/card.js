@@ -19,7 +19,6 @@ function errorHandler(error, req, res) {
 
 const getCards = (req, res) => {
   Card.find({})
-    .orFail(new Error('Список карточек пуст'))
     .then((cards) => res.send({ cards }))
     .catch((error) => {
       errorHandler(error, req, res);
@@ -38,13 +37,17 @@ const createCard = (req, res) => {
 };
 
 const deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
-    .then((card) => {
-      if (!card) {
-        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
-      }
-      res.send({ card });
+  const { cardId } = req.params;
+  Card.findOne({ _id: cardId })
+    .orFail(() => {
+      throw new Error(`Карточки с id : ${cardId} не существует!`);
+    })
+    .then(() => {
+      Card.findByIdAndRemove(cardId)
+        .then((card) => res.send({ card }))
+        .catch((error) => {
+          errorHandler(error, req, res);
+        });
     })
     .catch((error) => {
       errorHandler(error, req, res);
@@ -56,11 +59,10 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
+    .orFail(() => {
+      throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+    })
     .then((card) => {
-      if (!card) {
-        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
-      }
       res.send({ card });
     })
     .catch((error) => {
@@ -72,12 +74,12 @@ const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
+    { new: true },
   )
-    .orFail(new Error(`Карточки с id : ${req.params.cardId} не существует!`))
+    .orFail(() => {
+      throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+    })
     .then((card) => {
-      if (!card) {
-        throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
-      }
       res.send({ card });
     })
     .catch((error) => {

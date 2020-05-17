@@ -1,20 +1,13 @@
 const router = require('express').Router();
-const fs = require('fs');
-const path = require('path');
+const {
+  getUsers, getUsersById, createUser, patchUserInfo, patchUserAvatar,
+} = require('../controllers/user');
 
-const filepath = path.join(__dirname, '../data/users.json'); // собрали абсолютный путь к файлу
-const users = fs.readFileSync(filepath, { encoding: 'utf8' });
 
-router.get('/', (req, res) => {
-  res.send(users);
-});
-router.get('/:id', (req, res) => {
-  const user = JSON.parse(users).find((element) => element._id === req.params.id);
-  if (user) {
-    res.send(user);
-  } else {
-    res.status(404).send({ message: 'Нет пользователя с таким id' });
-  }
-});
+router.get('/', getUsers);
+router.post('/', createUser);
+router.get('/:userId', getUsersById);
+router.patch('/me', patchUserInfo);
+router.patch('/me/avatar', patchUserAvatar);
 
 module.exports = router;

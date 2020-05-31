@@ -1,13 +1,12 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { createError } = require('../lib/createError');
 
 const auth = (req, res, next) => {
   const { jwt: token } = req.cookies;
 
   if (!token) {
-    const error = new Error('Необходима авторизация');
-    error.name = 'Unauthorised';
-    throw error;
+    throw createError('Unauthorised', 'Необходима авторизация');
   }
 
   let payload;
@@ -15,9 +14,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, process.env.SECRET_KEY);
   } catch (err) {
-    const error = new Error('Необходима авторизация');
-    error.name = 'Unauthorised';
-    throw error;
+    throw createError('Unauthorised', 'Необходима авторизация');
   }
 
   req.user = payload;

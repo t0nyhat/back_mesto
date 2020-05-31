@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-
+const { createError } = require('../lib/createError');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -24,9 +24,7 @@ const deleteCardById = (req, res, next) => {
     })
     .then((cardDocument) => {
       if (!cardDocument.owner.equals(req.user._id)) {
-        const error = new Error('У вас нет прав для удаления карточки');
-        error.name = 'Unauthorised';
-        throw error;
+        throw createError('Unauthorised', 'У вас нет прав для удаления карточки');
       }
       Card.findByIdAndRemove(cardId)
         .then((card) => res.send({ card }))

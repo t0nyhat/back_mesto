@@ -1,11 +1,30 @@
-# backend sprint 13 v.1.4.0
+# backend sprint 14 v.1.5.0
 
-## Практическая работа №13
+## Практическая работа №14
 
 Изучение серверного программирования на node.js с использованием express.js.
 Добавлена поддержка mongo.db
   
 ### Функционал:
+```
+POST /signup - регистрация нового пользователя
+ формат:
+{
+	"name": "Anton",
+	"about":"about",
+	"avatar":"https://stackoverflow.com/questions/18022365/mongoose...validate-email-syntax",
+	"email": "ya3@mail.ru",
+	"password": "12345678"
+}
+в ответ придет объект пользователя
+```
+POST /sigin - авторизация
+ формат:
+{
+	"email": "ya3@mail.ru",
+	"password": "12345678"
+}
+ в ответ придет cookie s jwt
 ```
 GET /users - возвращает всеx пользователей
 ```

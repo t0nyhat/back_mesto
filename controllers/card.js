@@ -1,43 +1,40 @@
 const Card = require('../models/card');
-const { errorHandler } = require('../middlewares/errorHandler');
 
-const getCards = (req, res) => {
+
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ cards }))
-    .catch((error) => {
-      errorHandler(error, req, res);
-    });
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send({ card }))
-    .catch((error) => {
-      errorHandler(error, req, res);
-    });
+    .catch(next);
 };
 
-const deleteCardById = (req, res) => {
+const deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
   Card.findOne({ _id: cardId })
     .orFail(() => {
       throw new Error(`Карточки с id : ${cardId} не существует!`);
     })
-    .then(() => {
+    .then((cardDocument) => {
+      if (!cardDocument.owner.equals(req.user._id)) {
+        const error = new Error('У вас нет прав для удаления карточки');
+        error.name = 'Unauthorised';
+        throw error;
+      }
       Card.findByIdAndRemove(cardId)
         .then((card) => res.send({ card }))
-        .catch((error) => {
-          errorHandler(error, req, res);
-        });
+        .catch(next);
     })
-    .catch((error) => {
-      errorHandler(error, req, res);
-    });
+    .catch(next);
 };
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -49,12 +46,10 @@ const likeCard = (req, res) => {
     .then((card) => {
       res.send({ card });
     })
-    .catch((error) => {
-      errorHandler(error, req, res);
-    });
+    .catch(next);
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -66,9 +61,7 @@ const dislikeCard = (req, res) => {
     .then((card) => {
       res.send({ card });
     })
-    .catch((error) => {
-      errorHandler(error, req, res);
-    });
+    .catch(next);
 };
 module.exports = {
   getCards, createCard, deleteCardById, likeCard, dislikeCard,

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { createError } = require('../lib/createError');
 require('dotenv').config();
 
 const getUsers = (req, res, next) => {
@@ -25,6 +26,9 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  if (password.trim().length <= 7) {
+    throw createError('ValidationError', 'Пароль должен быть не менее 8 символов исключая пробелы');
+  }
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
@@ -65,7 +69,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY, {
+      const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY || 'dev-secret', {
         expiresIn: '7d',
       });
       res

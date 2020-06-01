@@ -3,16 +3,14 @@ require('dotenv').config();
 const { createError } = require('../lib/createError');
 
 const auth = (req, res, next) => {
-  const { jwt: token } = req.cookies;
-
-  if (!token) {
+  if ((!req.cookies.jwt)) {
     throw createError('Unauthorised', 'Необходима авторизация');
   }
 
   let payload;
 
   try {
-    payload = jwt.verify(token, process.env.SECRET_KEY);
+    payload = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY || 'dev-secret');
   } catch (err) {
     throw createError('Unauthorised', 'Необходима авторизация');
   }

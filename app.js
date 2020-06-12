@@ -9,6 +9,7 @@ const { Joi, celebrate } = require('celebrate');
 const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -35,6 +36,7 @@ const error = (req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -57,6 +59,7 @@ app.use(auth);
 app.use('/cards', require('./routes/cards.js'));
 app.use('/users', require('./routes/users.js'));
 
+app.use(errorLogger);
 app.use('*', error);
 app.use(errors());
 app.use(errorHandler);

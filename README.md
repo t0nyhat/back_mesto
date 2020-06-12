@@ -1,4 +1,4 @@
-# backend sprint 15 v.1.6.1
+# backend sprint 15 v.1.6.2
 
 ## Практическая работа №15
 
@@ -7,7 +7,7 @@
 
 #### Backend развернут по IP- адресу 84.201.173.157 [тут](http://84.201.173.157/)
 #### Также доступен на домене [https://api.mesto.tonyhat.site/](https://api.mesto.tonyhat.site/)
-#### Фронт доступен по адресу [https://mesto.tonyhat.site/](https://api.mesto.tonyhat.site/)
+#### Фронт доступен по адресу [https://mesto.tonyhat.site/](https://mesto.tonyhat.site/)
   
 ### Функционал:
 ```

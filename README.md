@@ -1,12 +1,13 @@
-# backend sprint 15 v.1.6.0
+# backend sprint 15 v.1.6.1
 
 ## Практическая работа №15
 
 Изучение серверного программирования на node.js с использованием express.js.
 Добавлена поддержка авторизации, mongo.db, helmet, express-rate-limit, celebrate, winston
-Backend развернут по IP- адресу 84.201.173.157 [тут] (http://84.201.173.157/)
-Также доступен на домене [https://api.mesto.tonyhat.site/] (https://api.mesto.tonyhat.site/)
-Фронт доступен по адресу [https://mesto.tonyhat.site/] (https://api.mesto.tonyhat.site/)
+
+#### Backend развернут по IP- адресу 84.201.173.157 [тут](http://84.201.173.157/)
+#### Также доступен на домене [https://api.mesto.tonyhat.site/](https://api.mesto.tonyhat.site/)
+#### Фронт доступен по адресу [https://mesto.tonyhat.site/](https://api.mesto.tonyhat.site/)
   
 ### Функционал:
 ```

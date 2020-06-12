@@ -4,6 +4,8 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { errors } = require('celebrate');
+const { Joi, celebrate } = require('celebrate');
 const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
@@ -34,8 +36,21 @@ const error = (req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(6),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+    avatar: Joi.string().required().uri(),
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(6),
+  }),
+}), createUser);
 app.use(cookieParser());
 app.use(auth);
 
@@ -43,7 +58,7 @@ app.use('/cards', require('./routes/cards.js'));
 app.use('/users', require('./routes/users.js'));
 
 app.use('*', error);
-
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 const Card = require('../models/card');
-const { createError } = require('../lib/createError');
+const NotFoundError = require('../errors/not-found-err');
+const ForbidenError = require('../errors/forbiden-err');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -12,7 +13,7 @@ const createCard = (req, res, next) => {
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .then((card) => res.send({ card }))
+    .then((card) => res.status(201).send({ card }))
     .catch(next);
 };
 
@@ -20,11 +21,11 @@ const deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
   Card.findOne({ _id: cardId })
     .orFail(() => {
-      throw new Error(`Карточки с id : ${cardId} не существует!`);
+      throw new NotFoundError(`Карточки с id : ${cardId} не существует!`);
     })
     .then((cardDocument) => {
       if (!cardDocument.owner.equals(req.user._id)) {
-        throw createError('Unauthorised', 'У вас нет прав для удаления карточки');
+        throw new ForbidenError('У вас нет прав для удаления карточки');
       }
       Card.findByIdAndRemove(cardId)
         .then((card) => res.send({ card }))
@@ -39,7 +40,7 @@ const likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+      throw new NotFoundError(`Карточки с id : ${req.params.cardId} не существует!`);
     })
     .then((card) => {
       res.send({ card });
@@ -54,7 +55,7 @@ const dislikeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new Error(`Карточки с id : ${req.params.cardId} не существует!`);
+      throw new NotFoundError(`Карточки с id : ${req.params.cardId} не существует!`);
     })
     .then((card) => {
       res.send({ card });

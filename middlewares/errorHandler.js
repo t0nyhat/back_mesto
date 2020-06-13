@@ -1,23 +1,24 @@
+const mongoose = require('mongoose');
 
-const errorHandler = (error, req, res, next) => {
-  switch (error.name) {
-    case 'CastError':
-      res.status(400).send({ message: error.message });
-      break;
-    case 'Error':
-      res.status(404).send({ message: error.message });
-      break;
-    case 'ValidationError':
-      res.status(400).send({ message: error.message });
-      break;
-    case 'Unauthorised':
-      res.status(401).send({ message: error.message });
-      break;
-    default:
-      res.status(500).send({ message: error.message });
-      break;
+const errorHandler = (err, req, res, next) => {
+  const { code } = err;
+  let { statusCode = 500, message } = err;
+
+  if (err instanceof mongoose.Error.ValidationError || err instanceof mongoose.Error.CastError) {
+    statusCode = 400;
+  }
+  if (code === 11000) {
+    statusCode = 409;
+    message = 'Данный email уже используется';
   }
 
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
   next();
 };
 module.exports = { errorHandler };

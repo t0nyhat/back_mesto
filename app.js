@@ -6,11 +6,11 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 const { Joi, celebrate } = require('celebrate');
+const validator = require('validator');
 const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const validator = require('validator');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

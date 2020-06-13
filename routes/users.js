@@ -1,10 +1,18 @@
 const router = require('express').Router();
 const { Joi, celebrate } = require('celebrate');
+const validator = require('validator');
+
 
 const {
   getUsers, getUsersById, patchUserInfo, patchUserAvatar,
 } = require('../controllers/user');
 
+const urlValidate = (link) => {
+  if (!validator.isURL(link)) {
+    throw new Error('invalid avatar link');
+  }
+  return link;
+};
 
 router.get('/', getUsers);
 router.get('/:userId', celebrate({
@@ -20,7 +28,7 @@ router.patch('/me', celebrate({
 }), patchUserInfo);
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required().uri(),
+    avatar: Joi.string().required().custom(urlValidate),
   }),
 }), patchUserAvatar);
 

@@ -10,6 +10,7 @@ const { login, createUser } = require('./controllers/user');
 const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const validator = require('validator');
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -34,6 +35,12 @@ const error = (req, res, next) => {
   next();
 };
 
+const urlValidate = (link) => {
+  if (!validator.isURL(link)) {
+    throw new Error('invalid avatar link');
+  }
+  return link;
+};
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
@@ -53,7 +60,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().uri(),
+    avatar: Joi.string().required().custom(urlValidate),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(6),
   }),

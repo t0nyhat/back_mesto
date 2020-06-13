@@ -1,6 +1,6 @@
 {
   "name": "back_mesto",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "first steps in backend development using node.js and express",
   "main": "app.js",
   "scripts": {

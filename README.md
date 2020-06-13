@@ -1,4 +1,4 @@
-# backend sprint 15 v.1.6.2
+# backend sprint 15 v.1.7.0
 
 ## Практическая работа №15
 
